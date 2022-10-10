@@ -2,8 +2,8 @@
 
 set -e
 # Also broken
-# if [ -z "$PLUGIN_DENO_DEPLOY_TOKEN" ] && [ -z "$DENO_DEPLOY_TOKEN" ]; then
-if [ -z "$DENO_DEPLOY_TOKEN" ]; then
+if [ -z "$PLUGIN_DENO_DEPLOY_TOKEN" ] && [ -z "$DENO_DEPLOY_TOKEN" ]; then
+# if [ -z "$DENO_DEPLOY_TOKEN" ]; then
   printf "A Deno Deploy token is required.\n\nGo to https://dash.deno.com/account#access-tokens to get one and set DENO_DEPLOY_TOKEN.\n"
   exit 1
 fi
@@ -18,12 +18,12 @@ if [ -z "$PLUGIN_PROJECT" ]; then
   exit 1
 fi
 
-FLAGS="--project=$PLUGIN_PROJECT"
+FLAGS="$FLAGS -p=$PLUGIN_PROJECT"
 
 # This is broken
-# if [ -n "$PLUGIN_DENO_DEPLOY_TOKEN" ]; then
-#   FLAGS="$FLAGS --token=$PLUGIN_DENO_DEPLOY_TOKEN"
-# fi
+if [ -n "$PLUGIN_DENO_DEPLOY_TOKEN" ]; then
+  FLAGS="$FLAGS --token=$PLUGIN_DENO_DEPLOY_TOKEN"
+fi
 
 if [ -n "$PLUGIN_EXCLUDE" ]; then
   FLAGS="$FLAGS --exclude=$PLUGIN_EXCLUDE"
@@ -45,6 +45,7 @@ if [ -n "$PLUGIN_PROD" ] || [ -n "$PLUGIN_PRODUCTION" ]; then
   FLAGS="$FLAGS --prod"
 fi
 
+
 # This disgusting monstrosity returns where the build was deployed to. Useful for testing and PRs.
-deployctl deploy "$FLAGS" "$PLUGIN_ENTRYPOINT" | tee "$(tty)" | awk '{print $2}' | tail -2 | head -1 > url
+deployctl deploy ${FLAGS} "$PLUGIN_ENTRYPOINT"
 
