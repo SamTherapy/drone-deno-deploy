@@ -45,4 +45,6 @@ if [ -n "$PLUGIN_PROD" ] || [ -n "$PLUGIN_PRODUCTION" ]; then
   FLAGS="$FLAGS --prod"
 fi
 
-deployctl deploy "$FLAGS" "$PLUGIN_ENTRYPOINT"
+# This disgusting monstrosity returns where the build was deployed to. Useful for testing and PRs.
+deployctl deploy "$FLAGS" "$PLUGIN_ENTRYPOINT" | tee "$(tty)" | awk '{print $2}' | tail -2 | head -1 > url
+
