@@ -5,7 +5,6 @@ RUN deno install --allow-read --allow-write --allow-env --allow-net --allow-run 
 
 COPY run.sh /bin/
 RUN chmod +x /bin/run.sh
-RUN touch /url && touch /temp && chmod 0777 /temp && chmod 0777 /url
 
 USER deno
 CMD ["/bin/run.sh"]
