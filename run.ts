@@ -41,7 +41,7 @@ if (env["PLUGIN_NO_STATIC"]) {
   flags.push(`--no-static`);
 }
 
-if (env["PLUGIN_PROD"]) {
+if (env["PLUGIN_PROD"] || env["PLUGIN_PRODUCTION"]) {
   flags.push(`--prod`);
 }
 
@@ -75,7 +75,7 @@ const err = new TextDecoder().decode(stderr);
 console.log(std);
 
 if (!status.success) {
-  console.error("Deno Deploy failed!")
+  console.error("Deno Deploy failed!");
   console.log(err);
   Deno.exit(1);
 }
