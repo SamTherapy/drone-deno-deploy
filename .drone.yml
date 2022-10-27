@@ -3,27 +3,30 @@ name: default
 type: docker
 
 steps:
-
-- name: Build
-  image: plugins/docker
-  settings:
-    repo: git.froth.zone/sam/drone-deno-deploy
-    dry_run: true
-  when:
-    event:
-      - pull_request  
-
-- name: Build & Publish  
-  image: plugins/docker
-  settings:
-    registry: git.froth.zone
-    username: sam
-    password: 
-      from_secret: password
-    repo: git.froth.zone/sam/drone-deno-deploy
-    tags: latest
+  - name: Build
+    image: plugins/docker
+    settings:
+      repo: git.froth.zone/sam/drone-deno-deploy
+      dry_run: true
     when:
-      branch:
-      - master
       event:
-      - push
+        - pull_request
+    depends_on:
+      - "clone"
+
+  - name: Build & Publish
+    image: plugins/docker
+    settings:
+      registry: git.froth.zone
+      username: sam
+      password:
+        from_secret: password
+      repo: git.froth.zone/sam/drone-deno-deploy
+      tags: latest
+      when:
+        branch:
+          - master
+        event:
+          - push
+      depends_on:
+        - "clone"
