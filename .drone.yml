@@ -5,16 +5,18 @@ type: docker
 steps:
   - name: Build
     image: plugins/docker
+    depends_on:
+    - "clone"
     settings:
       repo: git.froth.zone/sam/drone-deno-deploy
       dry_run: true
     when:
       event:
-        - pull_request
-    depends_on:
-      - "clone"
+      - pull_request
 
   - name: Build & Publish
+    depends_on:
+    - "clone"
     image: plugins/docker
     settings:
       registry: git.froth.zone
@@ -25,8 +27,6 @@ steps:
       tags: latest
       when:
         branch:
-          - master
+        - master
         event:
-          - push
-      depends_on:
-        - "clone"
+        - push
