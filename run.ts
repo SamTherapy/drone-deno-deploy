@@ -62,6 +62,7 @@ const prog = Deno.run({
   stderr: "piped",
 });
 
+// TODO: make this dynamic?
 const [status, stdout, stderr] = await Promise.all([
   prog.status(),
   prog.output(),
