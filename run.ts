@@ -64,11 +64,11 @@ const prog = Deno.run({
   stderr: "piped",
 });
 
-// TODO: make this dynamic?
-const status = await prog.status()
 
 copy(prog.stdout, Deno.stdout);
 copy(prog.stderr, Deno.stderr);
+
+const status = await prog.status()
 
 prog.close();
 
