@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-run --allow-env
+#!/usr/bin/env -S deno run --allow-run --allow-env --no-lock
 
 const env = Deno.env.toObject();
 
