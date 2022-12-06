@@ -1,5 +1,7 @@
 #!/usr/bin/env -S deno run --allow-run --allow-env --no-lock
 
+import { copy } from "https://deno.land/std@0.104.0/io/util.ts";
+
 const env = Deno.env.toObject();
 
 if (!env["PLUGIN_DENO_DEPLOY_TOKEN"] && !env["DENO_DEPLOY_TOKEN"]) {
@@ -63,20 +65,14 @@ const prog = Deno.run({
 });
 
 // TODO: make this dynamic?
-const [status, stdout, stderr] = await Promise.all([
-  prog.status(),
-  prog.output(),
-  prog.stderrOutput(),
-]);
+const status = await prog.status()
+
+copy(prog.stdout, Deno.stdout);
+copy(prog.stderr, Deno.stderr);
+
 prog.close();
-
-const std = new TextDecoder().decode(stdout);
-const err = new TextDecoder().decode(stderr);
-
-console.log(std);
 
 if (!status.success) {
   console.error("Deno Deploy failed!");
-  console.log(err);
   Deno.exit(1);
 }
