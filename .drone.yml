@@ -29,4 +29,7 @@ steps:
         branch:
         - master
         event:
-        - push
+          include:
+          - push
+          exclude:
+          - pull_request
