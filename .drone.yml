@@ -1,5 +1,5 @@
 kind: pipeline
-name: default
+name: PR
 type: docker
 
 steps:
@@ -14,6 +14,12 @@ steps:
       event:
       - pull_request
 
+---
+kind: pipeline
+name: Push
+type: docker
+
+steps:
   - name: Build & Publish
     depends_on:
     - "clone"
@@ -25,11 +31,10 @@ steps:
         from_secret: password
       repo: git.froth.zone/sam/drone-deno-deploy
       tags: latest
-      when:
-        branch:
+    when:
+      branch:
         - master
-        event:
-          include:
-          - push
-          exclude:
-          - pull_request
+      event:
+        - push
+      depends_on:
+      - "clone"
