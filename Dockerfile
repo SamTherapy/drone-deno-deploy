@@ -1,4 +1,4 @@
-FROM denoland/deno:1.31.2 as base
+FROM denoland/deno:1.31.3 as base
 
 
 RUN deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
