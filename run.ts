@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-run --allow-env --allow-sys --no-lock
+#!/usr/bin/env -S deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --no-lock
 
 import { copy } from "https://deno.land/std@0.104.0/io/util.ts";
 
