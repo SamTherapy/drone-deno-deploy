@@ -1,7 +1,5 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --no-lock
 
-const env = Deno.env.toObject();
-
 function getEnv(key: string, required = false, errorMsg?: string) {
   key = key.toUpperCase();
   if (env[key]) return env[key];
@@ -25,12 +23,14 @@ Deno.env.set(
   ),
 );
 
+const env = Deno.env.toObject();
+
 let temp = getEnv("ENTRY-POINT")
 if (temp) {
   Deno.env.set("ENTRYPOINT", temp);
 }
 
-temp = getEnv("Project", true, "An entrypoint is required");
+temp = getEnv("PROJECT", true, "An project is required");
 const flags = [`-p=${temp}`];
 
 temp = getEnv("EXCLUDE");
@@ -66,7 +66,7 @@ const command = new Deno.Command("deployctl", {
   args: [
     "deploy",
     ...flags,
-    getEnv("ENTRYPOINT", true, "An entrypoint is required"),
+    getEnv("ENTRYPOINT", true, "An entrypoint is required!!"),
   ],
   stdout: "piped",
   stderr: "piped",
