@@ -1,9 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --no-lock
 
-let temp = getEnv("ENTRY-POINT")
-if (temp) {
-  Deno.env.set("ENTRYPOINT", temp);
-}
+const env = Deno.env.toObject();
 
 Deno.env.set(
   "DENO_DEPLOY_TOKEN",
@@ -13,8 +10,6 @@ Deno.env.set(
     "A Deno Deploy token is required.\n\nGo to https://dash.deno.com/account#access-tokens to get one and set DENO_DEPLOY_TOKEN.",
   ),
 );
-
-const env = Deno.env.toObject();
 
 function getEnv(key: string, required = false, errorMsg?: string) {
   key = key.toUpperCase();
@@ -30,7 +25,7 @@ function getEnv(key: string, required = false, errorMsg?: string) {
   return "";
 }
 
-temp = getEnv("PROJECT", true, "An project is required");
+let temp = getEnv("PROJECT", true, "An project is required");
 const flags = [`-p=${temp}`];
 
 temp = getEnv("EXCLUDE");
@@ -66,7 +61,7 @@ const command = new Deno.Command("deployctl", {
   args: [
     "deploy",
     ...flags,
-    getEnv("ENTRYPOINT", true, "An entrypoint is required!!"),
+    getEnv("ENTRY-POINT") || getEnv("ENTRYPOINT", true, "An entrypoint is required!!"),
   ],
   stdout: "piped",
   stderr: "piped",
