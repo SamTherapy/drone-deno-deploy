@@ -18,6 +18,12 @@ jobs:
       contents: read
       packages: write
     steps:
+      - id: lowercase
+        run: |
+          echo REGISTRY=$(echo $REGISTRY | tr '[:upper:]' '[:lower:]') >> "${GITHUB_ENV}"
+      - id: lowercase-2
+        run: |
+          echo IMAGE_NAME=$(echo $IMAGE_NAME | tr '[:upper:]' '[:lower:]') >> "${GITHUB_ENV}"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
