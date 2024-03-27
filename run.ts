@@ -1,17 +1,8 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --no-lock
 
-function getEnv(key: string, required = false, errorMsg?: string) {
-  key = key.toUpperCase();
-  if (env[key]) return env[key];
-  // Drone/Woodpecker
-  else if (env[`PLUGIN_${key}`]) return env[`PLUGIN_${key}`];
-  // Github Actions
-  else if (env[`INPUT_${key}`]) return env[`INPUT_${key}`];
-  else if (required) {
-    console.error(errorMsg ?? `${key} is required`);
-    Deno.exit(1);
-  }
-  return "";
+let temp = getEnv("ENTRY-POINT")
+if (temp) {
+  Deno.env.set("ENTRYPOINT", temp);
 }
 
 Deno.env.set(
@@ -25,9 +16,18 @@ Deno.env.set(
 
 const env = Deno.env.toObject();
 
-let temp = getEnv("ENTRY-POINT")
-if (temp) {
-  Deno.env.set("ENTRYPOINT", temp);
+function getEnv(key: string, required = false, errorMsg?: string) {
+  key = key.toUpperCase();
+  if (env[key]) return env[key];
+  // Drone/Woodpecker
+  else if (env[`PLUGIN_${key}`]) return env[`PLUGIN_${key}`];
+  // Github Actions
+  else if (env[`INPUT_${key}`]) return env[`INPUT_${key}`];
+  else if (required) {
+    console.error(errorMsg ?? `${key} is required`);
+    Deno.exit(1);
+  }
+  return "";
 }
 
 temp = getEnv("PROJECT", true, "An project is required");
