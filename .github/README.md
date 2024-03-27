@@ -1,6 +1,6 @@
 # Drone Plugin to Deploy to Deno Deploy
 
-[![Build Status](https://ci.git.froth.zone/api/badges/sam/drone-deno-deploy/status.svg)](https://ci.git.froth.zone/sam/drone-deno-deploy)
+[![Built with the Deno Standard Library](https://raw.githubusercontent.com/denoland/deno_std/main/badge.svg)](https://deno.land/std)
 
 A [Drone](https://drone.io) and [Woodpecker](https://woodpecker-ci.org/) plugin
 to deploy a JavaScript/TypeScript application to
@@ -8,7 +8,7 @@ to deploy a JavaScript/TypeScript application to
 
 This is built on top of [deployctl](https://deno.com/deploy/docs/deployctl).
 
-## Example Usage
+## Example Usage (Drone)
 
 ```yaml
 - name: Deploy to Deno Deploy (prod)

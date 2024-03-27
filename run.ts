@@ -1,78 +1,79 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --no-lock
 
-import { copy } from "https://deno.land/std@0.104.0/io/util.ts";
-
 const env = Deno.env.toObject();
 
-if (!env["PLUGIN_DENO_DEPLOY_TOKEN"] && !env["DENO_DEPLOY_TOKEN"]) {
-  console.error(
+function getEnv(key: string, required = false, errorMsg?: string) {
+  key = key.toUpperCase();
+  if (env[key]) return env[key];
+  // Drone/Woodpecker
+  else if (env[`PLUGIN_${key}`]) return env[`PLUGIN_${key}`];
+  // Github Actions
+  else if (env[`INPUT_${key}`]) return env[`INPUT_${key}`];
+  else if (required) {
+    console.error(errorMsg ?? `${key} is required`);
+    Deno.exit(1);
+  }
+  return "";
+}
+
+Deno.env.set(
+  "DENO_DEPLOY_TOKEN",
+  getEnv(
+    "DENO_DEPLOY_TOKEN",
+    true,
     "A Deno Deploy token is required.\n\nGo to https://dash.deno.com/account#access-tokens to get one and set DENO_DEPLOY_TOKEN.",
-  );
-  Deno.exit(1);
+  ),
+);
+
+let temp: string = getEnv("Project", true, "An entrypoint is required");
+const flags = [`-p=${temp}`];
+
+temp = getEnv("EXCLUDE");
+if (temp) {
+  flags.push(`--exclude=${temp}`);
 }
 
-if (!env["PLUGIN_ENTRYPOINT"]) {
-  console.error("An entrypoint is required");
-  Deno.exit(1);
+temp = getEnv("INCLUDE");
+if (temp) {
+  flags.push(`--include=${temp}`);
 }
 
-if (!env["PLUGIN_PROJECT"]) {
-  console.error("An project is required");
-  Deno.exit(1);
+temp = getEnv("IMPORT_MAP");
+if (temp) {
+  flags.push(`--import-map=${temp}`);
 }
 
-const flags = [`-p=${env["PLUGIN_PROJECT"]}`];
-
-if (env["PLUGIN_DENO_DEPLOY_TOKEN"]) {
-  flags.push(`--token=${env["PLUGIN_DENO_DEPLOY_TOKEN"]}`);
-}
-
-if (env["PLUGIN_EXCLUDE"]) {
-  flags.push(`--exclude=${env["PLUGIN_EXCLUDE"]}`);
-}
-
-if (env["PLUGIN_INCLUDE"]) {
-  flags.push(`--include=${env["PLUGIN_INCLUDE"]}`);
-}
-
-if (env["PLUGIN_IMPORT_MAP"]) {
-  flags.push(`--import-map=${env["PLUGIN_IMPORT_MAP"]}`);
-}
-
-if (env["PLUGIN_NO_STATIC"]) {
+if (getEnv("NO_STATIC")) {
   flags.push(`--no-static`);
 }
 
-if (env["PLUGIN_PROD"] || env["PLUGIN_PRODUCTION"]) {
+if (getEnv("PRODUCTION") || getEnv("PROD")) {
   flags.push(`--prod`);
 }
 
-if (env["PLUGIN_DRY_RUN"]) {
+if (getEnv("DRY_RUN")) {
   flags.push(`--dry-run`);
 }
 
 console.log("Deploying to Deno Deploy......");
 
-const prog = Deno.run({
-  cmd: [
-    "deployctl",
+const command = new Deno.Command("deployctl", {
+  args: [
     "deploy",
     ...flags,
-    env["PLUGIN_ENTRYPOINT"],
+    getEnv("ENTRYPOINT", true, "An entrypoint is required"),
   ],
   stdout: "piped",
   stderr: "piped",
 });
 
+const process = command.spawn();
+process.stdout.pipeTo(Deno.stdout.writable);
+process.stderr.pipeTo(Deno.stderr.writable);
 
-copy(prog.stdout, Deno.stdout);
-copy(prog.stderr, Deno.stderr);
+const { success } = await process.status;
 
-const status = await prog.status()
-
-prog.close();
-
-if (!status.success) {
+if (!success) {
   console.error("Deno Deploy failed!");
   Deno.exit(1);
 }

@@ -1,0 +1,33 @@
+name: 'Deno Deploy Action'
+description: 'Github/Gitea/Forgejo Action for deploying applications via Deno Deploy'
+author: 'SamTherapy'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+inputs:
+  deno_deploy_token:
+    description: 'Deno Deploy Token'
+    required: true
+  project:
+    description: 'The project name used to deploy'
+    required: true
+  entrypoint:
+    description: 'The entrypoint file for the deployment'
+    required: true
+  exclude:
+    description: 'Files to exclude from the deployment'
+    required: false
+    default: ''
+  include:
+    description: 'Files to include in the deployment'
+    required: false
+    default: ''
+  import_map:
+    description: 'Path to the import map for the deployment'
+    required: false
+    default: ''
+  production:
+    description: 'Whether to deploy in production mode'
+    required: false
+
+  
