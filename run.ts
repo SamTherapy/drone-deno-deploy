@@ -25,7 +25,12 @@ Deno.env.set(
   ),
 );
 
-let temp: string = getEnv("Project", true, "An entrypoint is required");
+let temp = getEnv("ENTRY-POINT")
+if (temp) {
+  Deno.env.set("ENTRYPOINT", temp);
+}
+
+temp = getEnv("Project", true, "An entrypoint is required");
 const flags = [`-p=${temp}`];
 
 temp = getEnv("EXCLUDE");
