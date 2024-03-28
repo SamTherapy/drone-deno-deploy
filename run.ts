@@ -61,7 +61,7 @@ const command = new Deno.Command("deployctl", {
   args: [
     "deploy",
     ...flags,
-    getEnv("ENTRY-POINT") || getEnv("ENTRYPOINT", true, "An entrypoint is required!!"),
+    getEnv("ENTRY_POINT") || getEnv("ENTRYPOINT", true, "An entrypoint is required!!"),
   ],
   stdout: "piped",
   stderr: "piped",

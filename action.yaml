@@ -11,7 +11,7 @@ inputs:
   project:
     description: 'The project name used to deploy'
     required: true
-  entry-point:
+  entry_point:
     description: 'The entrypoint file for the deployment'
     required: true
   exclude:
